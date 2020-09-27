@@ -87,7 +87,11 @@ public class MainActivity extends ActionBarActivity implements DroneListener, To
     Handler mainHandler;
 
     @Override
+    /**
+     * 重写onCreate方法，在onStart方法之前启动
+     */
     protected void onCreate(Bundle savedInstanceState) {
+        //调用父类的onCreate
         super.onCreate(savedInstanceState);
         //设置主窗口显示信息
         setContentView(R.layout.activity_main);
@@ -95,20 +99,24 @@ public class MainActivity extends ActionBarActivity implements DroneListener, To
 
         //获取app文件名称
         final Context context = getApplicationContext();
-
         //创建控制
         controlTower = new ControlTower(context);
-        //创建无人机
+        //创建无人机实例
         drone = new Drone(context);
+        //模式选择
         this.modeSelector = (Spinner) findViewById(R.id.modeSelect);
-        this.modeSelector.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+        //增加模式选择监听事件
+        this.modeSelector.setOnItemSelectedListener(new Spinner.OnItemSelectedListener()
+        {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 onFlightModeSelected(view);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
                 // Do nothing
             }
         });
@@ -208,11 +216,15 @@ public class MainActivity extends ActionBarActivity implements DroneListener, To
     @Override
     public void onStart()
     {
-        Log.i("lxw","**********************");
+        Log.i("lxw","Hello Drone onStart启动");
         super.onStart();
         //执行连接任务
         Log.i(MAGTAG,"onStart");
+        Log.i(MAGTAG,"this:"+this); //this:hello.MainActivity
+        Log.i(MAGTAG,"this2:"+getApplicationContext()); //this2:hello.StarterApplication
+        //执行控制器连接
         this.controlTower.connect(this,getApplicationContext());
+        //更新模式类型
         updateVehicleModesForType(this.droneType);
         Log.i(MAGTAG,"connect");
 
@@ -328,29 +340,38 @@ public class MainActivity extends ActionBarActivity implements DroneListener, To
     // ==========================================================
 
     /**
-     * UI线程
+     * UI线程,点击连接事件
      * @param view
      */
-    public void onBtnConnectTap(View view) {
-        if (this.drone.isConnected()) {
-            Log.i("lxw","disconnect");
+    public void onBtnConnectTap(View view)
+    {
+        //判断是否连接状态，如果是连接，点击的话，提示端口连接
+        if (this.drone.isConnected())
+        {
+            Log.i("lxw","端开连接");
             this.drone.disconnect();
         } else
-            {
-                Log.i("lxw","disconnect2");
-                Toast.makeText(getApplicationContext(), "点击连接", Toast.LENGTH_SHORT).show();
+         {
+            Log.i("lxw","进行连接");
+            //Spinner提供了从一个数据集合中快速选择一项值的办法。默认情况下Spinner显示的是当前选择的值，
+            // 点击Spinner会弹出一个包含所有可选值的dropdown菜单，从该菜单中可以为Spinner选择一个新值
             Spinner connectionSelector = (Spinner) findViewById(R.id.selectConnectionType);
+            //获取到下拉框属性
             int selectedConnectionType = connectionSelector.getSelectedItemPosition();
-
+            //判断现在的连接是不是USB连接，如果是的话进行usb连接，否则是udp连接
+            //conntParams：ConnectionParameter{connectionType=0, paramsBundle=[extra_usb_baud_rate=115200]}
             ConnectionParameter connectionParams = selectedConnectionType == ConnectionType.TYPE_USB
                 ? ConnectionParameter.newUsbConnection(null)
                 : ConnectionParameter.newUdpConnection(null);
-                Log.i("lxw","conntParams："+connectionParams);
 
-            this.drone.connect(connectionParams, new LinkListener() {
+                Log.i("lxw","connectionParams："+connectionParams);
+            //内部类实现连接事件
+            this.drone.connect(connectionParams, new LinkListener()
+            {
 
                 @Override
-                public void onLinkStateUpdated(@NonNull LinkConnectionStatus connectionStatus) {
+                public void onLinkStateUpdated(@NonNull LinkConnectionStatus connectionStatus)
+                {
                     Log.i("lxw","connectionStatus："+connectionStatus);
                 }
             });

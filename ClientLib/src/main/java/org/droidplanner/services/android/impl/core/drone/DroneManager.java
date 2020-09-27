@@ -78,6 +78,7 @@ public class DroneManager<T extends Drone, D> implements DataLink.DataLinkListen
     }
     //链接
     public synchronized void connect(String appId, DroneApi listener, ConnectionParameter connParams) {
+        //org.droidplanner.services.android.impl.api.DroneApi
         Log.i("lxw","listener："+listener);
         Log.i("lxw","listener2："+TextUtils.isEmpty(appId));
         if (listener == null || TextUtils.isEmpty(appId)) {
@@ -86,11 +87,13 @@ public class DroneManager<T extends Drone, D> implements DataLink.DataLinkListen
         }
 
         connectedApps.put(appId, listener);
+        //开始连接
+        Log.i("lxw","doConnect：");
         doConnect(appId, listener, connParams);
     }
 
     protected void doConnect(String appId, DroneApi listener, ConnectionParameter connParams) {
-        Log.i("lxw","doConnect：");
+        Log.i("lxw"," my doConnect ：");
     }
 
     private void disconnect() {

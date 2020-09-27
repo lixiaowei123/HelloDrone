@@ -131,7 +131,8 @@ public class Drone {
         return this.context;
     }
 
-    synchronized void start() {
+    synchronized void start()
+    {
         Log.i("lxw","++start++");
         if (!serviceMgr.isTowerConnected()) {
             throw new IllegalStateException("Service manager must be connected.");
@@ -394,6 +395,10 @@ public class Drone {
     }
 
     /**
+     * 使用指定的{@link ConnectionParameter}和{@linklinklistener}连接到车辆
+     * connParams:确定如何连接车辆的指定参数。
+     * linkListener:将更新调用方链接连接状态的回调。
+     * callback.
      * Connect to a vehicle using a specified {@link ConnectionParameter} and a {@link LinkListener}
      * callback.
      *
@@ -401,10 +406,13 @@ public class Drone {
      * @param linkListener A callback that will update the caller on the state of the link connection.
      */
     public void connect(ConnectionParameter connParams, LinkListener linkListener) {
+        Log.i("lxw","开始进行drone连接操作");
         //USB连接
         VehicleApi.getApi(this).connect(connParams);
         this.connectionParameter = connParams;
         this.linkListener = linkListener;
+        Log.i("lxw","this.connectionParameter："+this.connectionParameter);
+        Log.i("lxw","this.linkListener："+this.linkListener);
     }
 
     /**
@@ -497,22 +505,22 @@ public class Drone {
 
     public boolean performAsyncActionOnHandler(Action action, Handler handler, AbstractCommandListener listener) {
         boolean value=false;
+        Log.i("lxw","performAsyncActionOnHandler");
         final IDroneApi droneApi = droneApiRef.get();
+        //org.droidplanner.services.android.impl.api.DroneApi
         Log.i("lxw","droneApi:"+droneApi);
-        Toast.makeText(getContext(), "异步执行", Toast.LENGTH_LONG).show();
-        Log.i("lxw","disconnect4");
-
         value=isStarted(droneApi);
-        Log.i("lxw","value:"+value);
-        if (value) {
+        Log.i("lxw","isStarted value:"+value);
+        if (value)
+        {
             try {
-                Log.i("lxw","disconnect5");
-//                Toast.makeText(getContext(), "异步执行1", Toast.LENGTH_LONG).show();
                 //执行行为
+                Log.i("lxw","executeAsyncAction:");
                 droneApi.executeAsyncAction(action, wrapListener(handler, listener));
                 return true;
-            } catch (RemoteException e) {
-                Log.i("lxw","disconnect6");
+            } catch (RemoteException e)
+            {
+                Log.i("lxw","执行 RemoteException");
                 Toast.makeText(getContext(), "异步执行2", Toast.LENGTH_LONG).show();
                 handleRemoteException(e);
             }

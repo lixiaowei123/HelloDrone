@@ -200,12 +200,14 @@ public class DroidPlannerService extends Service {
     @Override
     //这里是不是返回null了
     public IBinder onBind(Intent intent) {
-        Log.d("lxw","Binding intent: " + intent);
+        Log.d("lxw","onBind service  " + intent);
         final String action = intent.getAction();
-        if (IDroidPlannerServices.class.getName().equals(action)) {
+        if (IDroidPlannerServices.class.getName().equals(action))
+        {
             // Return binder to ipc client-server interaction.
             return dpServices;
-        } else {
+        } else
+            {
             return null;
         }
     }
@@ -214,7 +216,7 @@ public class DroidPlannerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("lxw","Binding " );
+        Log.d("lxw","Binding DroidPlannerService onCreate " );
         Timber.d("Creating DroneKit-Android.");
 
         final Context context = getApplicationContext();

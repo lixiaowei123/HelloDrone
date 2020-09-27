@@ -1,6 +1,7 @@
 package com.o3dr.android.client.apis;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.o3dr.android.client.Drone;
 import com.o3dr.services.android.lib.coordinate.LatLongAlt;
@@ -67,9 +68,13 @@ public class VehicleApi extends Api {
      */
     public void connect(ConnectionParameter parameter) {
         Bundle params = new Bundle();
+        //params:Bundle[{}]
+        Log.i("lxw","Bundle params："+params);
         params.putParcelable(EXTRA_CONNECT_PARAMETER, parameter);
         Action connectAction = new Action(ACTION_CONNECT, params);
         //无人机执行异步操作
+        //com.o3dr.services.android.lib.model.action.Action
+        Log.i("lxw","Bundle connectAction："+connectAction);
         drone.performAsyncAction(connectAction);
     }
 

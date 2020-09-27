@@ -168,7 +168,7 @@ public class MavLinkDroneManager extends DroneManager<MavLinkDrone, MAVLinkPacke
 
     @Override
     protected void doConnect(String appId, DroneApi listener, ConnectionParameter connParams) {
-        Log.i("lxw"," mavClientdoConnect：");
+        Log.i("lxw"," MavlinkDrone Manager doConnect：");
         if (mavClient.isDisconnected()) {
             Timber.i("Opening connection for %s", appId);
             mavClient.openConnection();

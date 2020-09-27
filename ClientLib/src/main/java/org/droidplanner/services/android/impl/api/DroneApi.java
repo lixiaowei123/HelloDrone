@@ -288,6 +288,7 @@ public final class DroneApi extends IDroneApi.Stub implements DroneInterfaces.On
 
                 this.connectionParams = connParams;
                 Log.i("lxw","this.connectionParams："+this.connectionParams);
+                //ownerId:com.o3dr.sample.hellodrone
                 Log.i("lxw","ownerId："+ownerId);
 
                 this.droneMgr = service.connectDroneManager(this.connectionParams, ownerId, this);
@@ -366,21 +367,25 @@ public final class DroneApi extends IDroneApi.Stub implements DroneInterfaces.On
      * 执行行为
      */
     public void executeAction(Action action, ICommandListener listener) throws RemoteException {
-        Log.i("lxw","action："+action);
-        if (action == null) {
+        //com.o3dr.services.android.lib.model.action.Action
+        Log.i("lxw","executeAction action："+action);
+        if (action == null)
+        {
             Log.i("lxw","action null：");
             return;
         }
 
         String type = action.getType();
+        //type com.o3dr.services.android.action.CONNECT
         Log.i("lxw","type："+type);
-        if (type == null) {
+        if (type == null)
+        {
             Log.i("lxw","type null：");
             return;
         }
 
         Bundle data = action.getData();
-        Log.i("lxw","data："+data);
+        Log.i("lxw","Bundle data："+data);
         if (data != null) {
             Log.i("lxw","data not null：");
             data.setClassLoader(context.getClassLoader());
@@ -393,7 +398,8 @@ public final class DroneApi extends IDroneApi.Stub implements DroneInterfaces.On
             // CONNECTION ACTIONS
             case ConnectionActions.ACTION_CONNECT:
                 ConnectionParameter parameter = data.getParcelable(ConnectionActions.EXTRA_CONNECT_PARAMETER);
-                Log.i("lxw","CONNECT：");
+                Log.i("lxw","ConnectionActions：");
+                //进行连接
                 connect(parameter);
                 break;
 
@@ -495,7 +501,7 @@ public final class DroneApi extends IDroneApi.Stub implements DroneInterfaces.On
      */
     @Override
     public void executeAsyncAction(Action action, ICommandListener listener) throws RemoteException {
-        Log.i("lxw","DT2");
+        Log.i("lxw","执行DroneApi中的executeAsyncAction");
         //执行异步操作行为
         executeAction(action, listener);
     }

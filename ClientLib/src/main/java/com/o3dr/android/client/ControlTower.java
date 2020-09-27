@@ -42,11 +42,11 @@ public class ControlTower {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             isServiceConnecting.set(false);
-            Log.i("lxw","EEE555");
+            Log.i("lxw","onServiceConnected");
             o3drServices = IDroidPlannerServices.Stub.asInterface(service);
             try {
                 o3drServices.asBinder().linkToDeath(binderDeathRecipient, 0);
-                Log.i("lxw","EEE333");
+                Log.i("lxw","onServiceConnected try ");
                 //通知连接
                 notifyTowerConnected();
             } catch (RemoteException e) {
@@ -84,7 +84,7 @@ public class ControlTower {
      */
     void notifyTowerConnected()
     {
-        Log.i("lxw","onTowerConnected");
+        Log.i("lxw","notifyTowerConnected");
         if (towerListener == null)
             return;
         //调用连接
@@ -139,50 +139,32 @@ public class ControlTower {
      * @param listener
      */
     public void connect(TowerListener listener,Context context) {
+        boolean value;
         Log.i("LXW","AAA");
+        //没有监听这,条件判断
         if (towerListener != null && (isServiceConnecting.get() || isTowerConnected()))
-
             return;
-
-        if (listener == null) {
-
+         //是空
+        if (listener == null)
+        {
             throw new IllegalArgumentException("ServiceListener argument cannot be null.");
         }
         Log.i("LXW","CCC");
         towerListener = listener;
         Log.i("LXW","DDD");
-        if (!isTowerConnected() && !isServiceConnecting.get()) {
-            final Intent serviceIntent = ApiAvailability.getInstance().getAvailableServicesInstance(context);
-            isServiceConnecting.set(context.bindService(serviceIntent, o3drServicesConnection,
-                    Context.BIND_AUTO_CREATE));
+        if (!isTowerConnected() && !isServiceConnecting.get())
+        {
+            Intent serviceIntent = ApiAvailability.getInstance().getAvailableServicesInstance(context);
+            //value1:Intent { act=com.o3dr.services.android.lib.model.IDroidPlannerServices
+            // cmp=com.o3dr.sample.hellodrone/org.droidplanner.services.android.impl.api.DroidPlannerService }
+            Log.i("LXW","value1:"+ApiAvailability.getInstance().getAvailableServicesInstance(context));
+            value= this.context.bindService(serviceIntent, o3drServicesConnection, Context.BIND_AUTO_CREATE);
+            //value2:true
+            Log.i("LXW","value2:"+value);
+            isServiceConnecting.set(value);
         }
         Log.i("LXW","EEE");
     }
-//    public void connect(TowerListener listener) {
-//        boolean newValue;
-//
-//        Log.i("lxw","AAA");
-//        if (towerListener != null && (isServiceConnecting.get() || isTowerConnected()))
-//            return;
-//
-//        if (listener == null) {
-//            Log.i("lxw","BBB");
-//            throw new IllegalArgumentException("ServiceListener argument cannot be null.");
-//        }
-//
-//        towerListener = listener;
-//        Log.i("lxw","CCC");
-//        if (!isTowerConnected() && !isServiceConnecting.get())
-//        {
-//            Log.i("lxw","DDD");
-//
-//            Intent serviceIntent = ApiAvailability.getInstance().getAvailableServicesInstance(context);
-//
-//            newValue=context.bindService(serviceIntent, o3drServicesConnection, BIND_AUTO_CREATE);
-//            isServiceConnecting.set(newValue);
-//            Log.i("lxw","EEE");
-//        }
-//    }
 
     public void disconnect() {
         if (o3drServices != null) {
