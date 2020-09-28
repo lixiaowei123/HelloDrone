@@ -47,7 +47,9 @@ public class MAVLinkClient implements DataLink.DataLinkProvider<MAVLinkMessage> 
 
         @Override
         public void onReceivePacket(final MAVLinkPacket packet) {
+            Log.i("lxw"," notifyReceivedData：");
             listener.notifyReceivedData(packet);
+            Log.i("lxw"," receivedMsg END：");
         }
 
         @Override
@@ -114,6 +116,7 @@ public class MAVLinkClient implements DataLink.DataLinkProvider<MAVLinkMessage> 
         Log.i("lxw"," mavlinkConn："+mavlinkConn); //UsbConnection
         if(mavlinkConn == null) {
             switch (connectionType) {
+                //USB类型
                 case ConnectionType.TYPE_USB:  //0
                     final int baudRate = paramsBundle.getInt(ConnectionType.EXTRA_USB_BAUD_RATE,
                             ConnectionType.DEFAULT_USB_BAUD_RATE);
@@ -121,14 +124,14 @@ public class MAVLinkClient implements DataLink.DataLinkProvider<MAVLinkMessage> 
                     Log.i("lxw"," mavlinkConn：6"+mavlinkConn);
                     Timber.i("Connecting over usb.");
                     break;
-
+                //蓝牙类型
                 case ConnectionType.TYPE_BLUETOOTH:
                     //Retrieve the bluetooth address to connect to
                     final String bluetoothAddress = paramsBundle.getString(ConnectionType.EXTRA_BLUETOOTH_ADDRESS);
                     mavlinkConn = new BluetoothConnection(context, bluetoothAddress);
                     Timber.i("Connecting over bluetooth.");
                     break;
-
+                //TCP类型
                 case ConnectionType.TYPE_TCP:
                     //Retrieve the server ip and port
                     final String tcpServerIp = paramsBundle.getString(ConnectionType.EXTRA_TCP_SERVER_IP);
@@ -137,14 +140,14 @@ public class MAVLinkClient implements DataLink.DataLinkProvider<MAVLinkMessage> 
                     mavlinkConn = new AndroidTcpConnection(context, tcpServerIp, tcpServerPort, new WifiConnectionHandler(context));
                     Timber.i("Connecting over tcp.");
                     break;
-
+                //UDP类型
                 case ConnectionType.TYPE_UDP:
                     final int udpServerPort = paramsBundle
                             .getInt(ConnectionType.EXTRA_UDP_SERVER_PORT, ConnectionType.DEFAULT_UDP_SERVER_PORT);
                     mavlinkConn = new AndroidUdpConnection(context, udpServerPort, new WifiConnectionHandler(context));
                     Timber.i("Connecting over udp.");
                     break;
-
+                //SOLO类型
                 case ConnectionType.TYPE_SOLO: {
                     Timber.i("Creating solo connection");
                     final String soloLinkId = paramsBundle.getString(ConnectionType.EXTRA_SOLO_LINK_ID, null);
@@ -163,7 +166,8 @@ public class MAVLinkClient implements DataLink.DataLinkProvider<MAVLinkMessage> 
         mavlinkConn.addMavLinkConnectionListener(tag, mConnectionListener);
 
         //Check if we need to ping a server to receive UDP data stream.
-        if (connectionType == ConnectionType.TYPE_UDP) {
+        if (connectionType == ConnectionType.TYPE_UDP)
+        {
             final String pingIpAddress = paramsBundle.getString(ConnectionType.EXTRA_UDP_PING_RECEIVER_IP);
             if (!TextUtils.isEmpty(pingIpAddress)) {
                 try {
@@ -182,8 +186,9 @@ public class MAVLinkClient implements DataLink.DataLinkProvider<MAVLinkMessage> 
             }
         }
         Log.i("lxw"," mavlinkConn：888");
-        if (mavlinkConn.getConnectionStatus() == MavLinkConnection.MAVLINK_DISCONNECTED) {
-            Log.i("lxw"," mavlinkConn：8");
+        if (mavlinkConn.getConnectionStatus() == MavLinkConnection.MAVLINK_DISCONNECTED)
+        {
+            Log.i("lxw"," 开始执行Mavlink 连接");
             mavlinkConn.connect(null);
         }
     }

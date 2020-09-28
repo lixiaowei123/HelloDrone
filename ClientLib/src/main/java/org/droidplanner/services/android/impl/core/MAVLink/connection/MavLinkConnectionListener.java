@@ -9,6 +9,7 @@ import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
  */
 public interface MavLinkConnectionListener {
     /**
+     * 通过mavlink连接接收数据时调用。
      * Called when data is received via the mavlink connection.
      *
      * @param packet received data

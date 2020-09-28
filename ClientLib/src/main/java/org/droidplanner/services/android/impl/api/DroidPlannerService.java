@@ -107,12 +107,14 @@ public class DroidPlannerService extends Service {
     }
 
     /**
+     * 使用给定的连接参数与车辆建立连接。
      * Establish a connection with a vehicle using the given connection parameter.
      *
-     * @param connParams Parameters used to connect to the vehicle.
-     * @param appId      Application id of the connecting client.
-     * @param listener   Callback to receive drone events.
-     * @return A DroneManager instance which acts as router between the connected vehicle and the listeneing client(s).
+     * @param connParams 用于连接到车辆的参数---Parameters used to connect to the vehicle.
+     * @param appId      连接应用程序的客户端id---Application id of the connecting client.
+     * @param listener   回调以接收无人机事件。Callback to receive drone events.
+     * @return 一个DroneManager实例，充当连接的车辆和正在侦听的客户端之间的路由器。
+     *       A DroneManager instance which acts as router between the connected vehicle and the listeneing client(s).
      */
     DroneManager connectDroneManager(ConnectionParameter connParams, String appId, DroneApi listener) {
 
@@ -142,6 +144,7 @@ public class DroidPlannerService extends Service {
 
         Timber.d("Drone manager connection for " + appId);
         Log.i("lxw","Generating connect");
+        //进行连接
         droneMgr.connect(appId, listener, connParams);
         return droneMgr;
     }

@@ -151,6 +151,10 @@ public class UsbConnection extends AndroidMavLinkConnection {
             mBaudRate = baudRate;
         }
 
+        /**
+         * 打开USB
+         * @param extras
+         */
         protected void onUsbConnectionOpened(Bundle extras) {
             parentConnection.onConnectionOpened(extras);
         }

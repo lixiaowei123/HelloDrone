@@ -79,7 +79,7 @@ public abstract class MavLinkConnection {
     private final AtomicReference<Bundle> extrasHolder = new AtomicReference<>();
 
     /**
-     * Start the connection process.
+     * 启动连接进程。Start the connection process.
      */
     private final Runnable mConnectingTask = new Runnable() {
         @Override
@@ -88,7 +88,7 @@ public abstract class MavLinkConnection {
             loadPreferences();
             // Open the connection
             try {
-                Log.i("lxw"," mavlinkConn：000");
+                Log.i("lxw"," 开始执行打开openConnection run");
                 openConnection(extrasHolder.get());
                 Log.i("lxw"," mavlinkConn：111");
             } catch (IOException e) {
@@ -117,6 +117,7 @@ public abstract class MavLinkConnection {
     }
 
     /**
+     * 管理消息的接收和发送。主要处理mavlink信息
      * Manages the receiving and sending of messages.
      */
     private final Runnable mManagerTask = new Runnable() {
@@ -133,22 +134,30 @@ public abstract class MavLinkConnection {
 
                 // Launch the 'Sending' thread
                 mLogger.logInfo(TAG, "Starting sender thread.");
+                Log.i("lxw"," Starting new thread.");
                 sendingThread = new Thread(mSendingTask, "MavLinkConnection-Sending Thread");
                 sendingThread.start();
 
                 //Launch the 'Logging' thread
                 mLogger.logInfo(TAG, "Starting logging thread.");
+                Log.i("lxw"," Starting sender thread.");
                 loggingThread = new Thread(mLoggingTask, "MavLinkConnection-Logging Thread");
                 loggingThread.start();
-
+                //协议解析
                 final Parser parser = new Parser();
+                //com.MAVLink.Parser
+                Log.i("lxw"," parser："+parser);
+                //服务解析状态
                 parser.stats.resetStats();
-
+                //创建解析数据数组
                 final byte[] readBuffer = new byte[READ_BUFFER_SIZE];
 
                 while (mConnectionStatus.get() == MAVLINK_CONNECTED)
                 {
+                    //读取bufferSize
                     int bufferSize = readDataBlock(readBuffer);
+                    //bufferSize=
+                    Log.i("lxw"," bufferSize："+bufferSize);
                     handleData(parser, bufferSize, readBuffer);
                 }
             } catch (IOException e) {
@@ -171,6 +180,12 @@ public abstract class MavLinkConnection {
             }
         }
 
+        /**
+         * 开始进行数据处理
+         * @param parser
+         * @param bufferSize
+         * @param buffer
+         */
         private void handleData(Parser parser, int bufferSize, byte[] buffer) {
             if (bufferSize < 1) {
                 return;
@@ -178,9 +193,12 @@ public abstract class MavLinkConnection {
 
             for (int i = 0; i < bufferSize; i++)
             {
+                //解析包
                 MAVLinkPacket receivedPacket = parser.mavlink_parse_char(buffer[i] & 0x00ff);
-                if (receivedPacket != null) {
+                if (receivedPacket != null)
+                {
                     queueToLog(receivedPacket);
+                    Log.i("lxw"," 开始报告解析：");
                     reportReceivedPacket(receivedPacket);
                 }
             }
@@ -282,7 +300,7 @@ public abstract class MavLinkConnection {
     }
 
     /**
-     * 建立链接
+     * 建立MAVLINK链接
      * @param extras
      */
     public void connect(Bundle extras) {
@@ -290,20 +308,24 @@ public abstract class MavLinkConnection {
         if (mConnectionStatus.compareAndSet(MAVLINK_DISCONNECTED, MAVLINK_CONNECTING)) {
             extrasHolder.set(extras);
             mLogger.logInfo(TAG, "Starting connection thread.");
-            Log.i("lxw"," mavlinkConn：1000");
+            Log.i("lxw"," mavlink连接任务创建");
             mConnectThread = new Thread(mConnectingTask, "MavLinkConnection-Connecting Thread");
-
+            //启动连接
             mConnectThread.start();
             //报告链接状态
             reportConnecting();
         }
     }
 
-    protected void
-    onConnectionOpened(Bundle extras) {
+    /**
+     * 打开设备，执行mManagerTask任务
+     * @param extras
+     */
+    protected void onConnectionOpened(Bundle extras) {
         if (mConnectionStatus.compareAndSet(MAVLINK_CONNECTING, MAVLINK_CONNECTED)) {
             extrasHolder.set(extras);
             mLogger.logInfo(TAG, "Starting manager thread.");
+            Log.i("lxw"," mManagerTask主要处理mavlink信息");
             mTaskThread = new Thread(mManagerTask, "MavLinkConnection-Manager Thread");
             mTaskThread.start();
         }
@@ -516,16 +538,23 @@ public abstract class MavLinkConnection {
     }
 
     /**
+     * 将接收到的消息通知mavlink侦听器的实用程序方法。
+     * 接收到mavlink数据包
      * Utility method to notify the mavlink listeners about received messages.
-     *
      * @param packet received mavlink packet
      */
-    private void reportReceivedPacket(MAVLinkPacket packet) {
-        if (mListeners.isEmpty()) {
+    private void reportReceivedPacket(MAVLinkPacket packet)
+    {
+        //监听者是否非空
+        if (mListeners.isEmpty())
+        {
             return;
         }
 
-        for (MavLinkConnectionListener listener : mListeners.values()) {
+        for (MavLinkConnectionListener listener : mListeners.values())
+        {
+            Log.i("lxw"," onReceivePacket：");
+            //接收数据处理
             listener.onReceivePacket(packet);
         }
     }

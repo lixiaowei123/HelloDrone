@@ -588,10 +588,15 @@ public class GenericMavLinkDrone implements MavLinkDrone {
         return false;
     }
 
+    /**
+     * 处理mavlink接收信息
+     * @param message
+     */
     @Override
     public void onMavLinkMessageReceived(MAVLinkMessage message) {
-
-        if ( (message.sysid != this.getSysid()) && !isMavLinkMessageException(message) ) {
+        Log.i("lxw","message.sysid ："+message.sysid );
+        if ( (message.sysid != this.getSysid()) && !isMavLinkMessageException(message) )
+        {
             // Reject messages that are not for this drone's system id
             return;
         }

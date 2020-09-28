@@ -290,7 +290,7 @@ public final class DroneApi extends IDroneApi.Stub implements DroneInterfaces.On
                 Log.i("lxw","this.connectionParams："+this.connectionParams);
                 //ownerId:com.o3dr.sample.hellodrone
                 Log.i("lxw","ownerId："+ownerId);
-
+                //进行连接管理调用
                 this.droneMgr = service.connectDroneManager(this.connectionParams, ownerId, this);
                 Log.i("lxw","this.droneMgr："+this.droneMgr);
                 Log.i("lxw","bufdata："+isEventsBufferingEnabled());

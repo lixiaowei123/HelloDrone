@@ -127,7 +127,8 @@ class UsbCDCConnection extends UsbConnection.UsbConnectionImpl {
 
         //Pick the first device
         UsbDevice device = availableDevices.get(0);
-        if (manager.hasPermission(device)) {
+        if (manager.hasPermission(device))
+        {
             openUsbDevice(device, extras);
         } else {
             removeWatchdog();
@@ -139,11 +140,17 @@ class UsbCDCConnection extends UsbConnection.UsbConnectionImpl {
         }
     }
 
+    /**
+     * 打开openUsbDevice设备
+     * @param device
+     * @param extras
+     * @throws IOException
+     */
     private void openUsbDevice(UsbDevice device, Bundle extras) throws IOException {
-        // Get UsbManager from Android.
+        //从Android获取UsbManager。--- Get UsbManager from Android.
         UsbManager manager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
 
-        // Find the first available driver.
+        //找到第一个可用的驱动程序。--- Find the first available driver.
         final UsbSerialDriver serialDriver = UsbSerialProber.openUsbDevice(manager, device);
 
         if (serialDriver == null) {
@@ -158,7 +165,8 @@ class UsbCDCConnection extends UsbConnection.UsbConnectionImpl {
                 serialDriverRef.set(serialDriver);
 
                 onUsbConnectionOpened(extras);
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 Log.e(TAG, "Error setting up device: " + e.getMessage(), e);
                 try {
                     serialDriver.close();

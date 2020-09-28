@@ -384,6 +384,7 @@ public abstract class ArduPilot extends GenericMavLinkDrone {
 
     @Override
     public void onMavLinkMessageReceived(MAVLinkMessage message) {
+        Log.i("lxw","ardupilot message.sysid ："+message.sysid );
 
         if ((message.sysid != this.getSysid()) && !isMavLinkMessageException(message)) {
             // Reject Messages that are not for the system id
@@ -461,7 +462,7 @@ public abstract class ArduPilot extends GenericMavLinkDrone {
                     break;
             }
         }
-
+        Log.i("lxw","super message.sysid ："+message.sysid );
         super.onMavLinkMessageReceived(message);
     }
 

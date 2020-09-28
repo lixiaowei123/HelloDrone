@@ -76,7 +76,13 @@ public class DroneManager<T extends Drone, D> implements DataLink.DataLinkListen
         connectedApps.clear();
 
     }
-    //链接
+
+    /**
+     * 进行连接
+     * @param appId
+     * @param listener
+     * @param connParams
+     */
     public synchronized void connect(String appId, DroneApi listener, ConnectionParameter connParams) {
         //org.droidplanner.services.android.impl.api.DroneApi
         Log.i("lxw","listener："+listener);

@@ -250,23 +250,34 @@ public class MavLinkDroneManager extends DroneManager<MavLinkDrone, MAVLinkPacke
 
     @Override
     public void notifyReceivedData(MAVLinkPacket packet) {
+
         MAVLinkMessage receivedMsg = packet.unpack();
+        Log.i("lxw"," receivedMsg："+receivedMsg);
         if (receivedMsg == null)
             return;
-
-        if (receivedMsg.msgid == msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK) {
+        Log.i("lxw"," MSGID："+receivedMsg.msgid);
+        if (receivedMsg.msgid == msg_command_ack.MAVLINK_MSG_ID_COMMAND_ACK)
+        {
+            Log.i("lxw"," command ack：");
             msg_command_ack commandAck = (msg_command_ack) receivedMsg;
             handleCommandAck(commandAck);
-        } else {
+        } else
+         {
+             Log.i("lxw"," Handler receiveData ：");
             this.mavLinkMsgHandler.receiveData(receivedMsg);
             if (this.drone != null)
             {
+                Log.i("lxw"," 核心处理mavlink信息：");
                 this.drone.onMavLinkMessageReceived(receivedMsg);
             }
         }
 
-        if (!connectedApps.isEmpty()) {
-            for (DroneApi droneEventsListener : connectedApps.values()) {
+        if (!connectedApps.isEmpty())
+        {
+            Log.i("lxw"," spp ："+connectedApps.values());
+            //org.droidplanner.services.android.impl.api.DroneApi
+            for (DroneApi droneEventsListener : connectedApps.values())
+            {
                 droneEventsListener.onReceivedMavLinkMessage(receivedMsg);
             }
         }
